@@ -1,8 +1,14 @@
 //Load the requirejs optimizer
 var requirejs = require('<%= rjs_path %>'),
-  //Set up basic config, include config that is
-  //common to all the optimize() calls.
-  basConfig = <%= JSON.pretty_generate(build_config.reject {|k,v| k == 'modules'}) %>;
+    //Set up basic config, include config that is
+    //common to all the optimize() calls.
+    basConfig = <%= JSON.pretty_generate(build_config.reject {|k,v| k == 'modules'}) %>,
+    // Configuration from Jam config file
+    jamConfig = require('<%= source_dir %>/require.config');
+
+    
+// All the packages are in tmp/assets already
+delete jamConfig.packages;
 
 // Function used to mix in baseConfig to a new config target
 function mix(target) {
@@ -13,6 +19,8 @@ function mix(target) {
   }
   return target;
 }
+
+basConfig = mix(jamConfig);
 
 var module_specs = [
 <% build_config['modules'].each do |m| %>
