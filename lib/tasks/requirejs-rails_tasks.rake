@@ -92,7 +92,10 @@ EOM
       requirejs.env.each_logical_path do |logical_path|
         next unless requirejs.config.asset_allowed?(logical_path)
         if asset = requirejs.env.find_asset(logical_path)
-          filename = requirejs.config.source_dir + asset.logical_path
+          filename = requirejs.config.source_dir + asset.logical_path 
+          filename.dirname.mkpath
+          asset.write_to(filename)
+          filename = requirejs.config.source_dir + File.basename(asset.logical_path)
           filename.dirname.mkpath
           asset.write_to(filename)
         end
@@ -149,3 +152,4 @@ task "assets:precompile" => ["requirejs:precompile:external"]
 if ARGV[0] == "requirejs:precompile:all"
   task "assets:environment" => ["requirejs:precompile:disable_js_compressor"]
 end
+
